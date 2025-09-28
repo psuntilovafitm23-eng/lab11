@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тортики & Тістечка</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .logo .ampersand {
+            color: #e74c3c;
+            font-weight: 400;
+        }
+
+        .main-content {
+            display: flex;
+            gap: 30px;
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .filter-group {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            background: #ecf0f1;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            color: #34495e;
+        }
+
+        .filter-btn:hover {
+            background: #bdc3c7;
+        }
+
+        .calorie-filter {
+            grid-column: span 2;
+        }
+
+        .calorie-slider {
+            width: 100%;
+            margin-top: 10px;
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: #ecf0f1;
+            outline: none;
+        }
+
+        .calorie-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e74c3c;
+            cursor: pointer;
+        }
+
+        .calorie-range {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        input[type="radio"]:checked + .filter-btn {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .gallery {
+            display: grid;
+            gap: 25px;
+            flex: 1;
+        }
+
+        .recipe-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .recipe-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            object-position: center top;
+        }
+
+        .recipe-info {
+            padding: 20px;
+        }
+
+        .recipe-category {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+
+        .recipe-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .recipe-calories {
+            color: #e74c3c;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .recipe-card[data-category="торт"] { --category: торт; }
+        .recipe-card[data-category="тістечко"] { --category: тістечко; }
+        .recipe-card[data-category="рулет"] { --category: рулет; }
+        .recipe-card[data-category="пиріг"] { --category: пиріг; }
+        .recipe-card[data-category="сирники"] { --category: сирники; }
+
+        .container:has(input[name="category"]:checked) .recipe-card {
+            display: none;
+        }
+
+        .container:has(#торт:checked) .recipe-card[data-category="торт"],
+        .container:has(#тістечко:checked) .recipe-card[data-category="тістечко"],
+        .container:has(#рулет:checked) .recipe-card[data-category="рулет"],
+        .container:has(#пиріг:checked) .recipe-card[data-category="пиріг"],
+        .container:has(#сирники:checked) .recipe-card[data-category="сирники"],
+        .container:has(#скинути:checked) .recipe-card {
+            display: block;
+        }
+
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid #ecf0f1;
+            color: #7f8c8d;
+        }
+
+        .contact-info {
+            margin-bottom: 10px;
+        }
+
+        .contact-info a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        @media (max-width: 730px) {
+            .main-content {
+                flex-direction: column;
+            }
+
+            .filters {
+                grid-template-columns: repeat(2, 1fr);
+                order: 1;
+            }
+
+            .calorie-filter {
+                grid-column: span 2;
+            }
+
+            .gallery {
+                grid-template-columns: 1fr;
+                order: 2;
+            }
+
+            .recipe-image {
+                height: 250px;
+            }
+        }
+
+        @media (min-width: 730px) and (max-width: 1200px) {
+            .main-content {
+                flex-direction: column;
+            }
+
+            .filters {
+                grid-template-columns: repeat(3, 1fr);
+                order: 1;
+            }
+
+            .calorie-filter {
+                grid-column: span 3;
+            }
+
+            .gallery {
+                grid-template-columns: repeat(2, 1fr);
+                order: 2;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .main-content {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+
+            .filters {
+                display: flex;        
+                flex-direction: column; 
+                gap: 15px;
+                width: 300px;
+            }
+
+            .gallery {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="logo">Тортики <span class="ampersand">&</span> Тістечка</h1>
+        </header>
+
+        <div class="main-content">
+            <div class="gallery">
+                <div class="recipe-card" data-category="торт" data-calories="265">
+                    <img src="./photos/smetankovui.png" alt="Сметанковий торт" class="recipe-image">
+                    <div class="recipe-info">
+                        <div class="recipe-category">Торт:</div>
+                        <div class="recipe-name">Сметанковий</div>
+                        <div class="recipe-calories">Калорій у порції 265 кКал</div>
+                    </div>
+                </div>
+                <div class="recipe-card" data-category="тістечко" data-calories="305">
+                    <img src="./photos/muffin.png" alt="Мафін" class="recipe-image">
+                    <div class="recipe-info">
+                        <div class="recipe-category">Тістечко:</div>
+                        <div class="recipe-name">Мафін</div>
+                        <div class="recipe-calories">Калорій у порції 305 кКал</div>
+                    </div>
+                </div>
+                <div class="recipe-card" data-category="сирники" data-calories="450">
+                    <img src="./photos/syrnuku.png" alt="Три ягоди" class="recipe-image">
+                    <div class="recipe-info">
+                        <div class="recipe-category">Сирники:</div>
+                        <div class="recipe-name">Три ягоди</div>
+                        <div class="recipe-calories">Калорій у порції 450 кКал</div>
+                    </div>
+                </div>
+                <div class="recipe-card" data-category="торт" data-calories="523">
+                    <img src="./photos/smachnyi.png" alt="Смачний торт" class="recipe-image">
+                    <div class="recipe-info">
+                        <div class="recipe-category">Торт:</div>
+                        <div class="recipe-name">Смачний</div>
+                        <div class="recipe-calories">Калорій у порції 523 кКал</div>
+                    </div>
+                </div>
+                <div class="recipe-card" data-category="рулет" data-calories="380">
+                    <img src="./photos/rulet.png" alt="Святковий рулет" class="recipe-image">
+                    <div class="recipe-info">
+                        <div class="recipe-category">Рулет:</div>
+                        <div class="recipe-name">Святковий</div>
+                        <div class="recipe-calories">Калорій у порції 380 кКал</div>
+                    </div>
+                </div>
+                <div class="recipe-card" data-category="пиріг" data-calories="298">
+                    <img src="./photos/pyrig.png" alt="Свято у бабусі" class="recipe-image">
+                    <div class="recipe-info">
+                        <div class="recipe-category">Пиріг:</div>
+                        <div class="recipe-name">Свято у бабусі</div>
+                        <div class="recipe-calories">Калорій у порції 298 кКал</div>
+                    </div>
+                </div>
+                <div class="recipe-card" data-category="торт" data-calories="600">
+                    <img src="./photos/tort.png" alt="Ведмедик торт" class="recipe-image">
+                    <div class="recipe-info">
+                        <div class="recipe-category">Торт:</div>
+                        <div class="recipe-name">Ведмедик</div>
+                        <div class="recipe-calories">Калорій у порції 600 кКал</div>
+                    </div>
+                </div>
+                <div class="recipe-card" data-category="тістечко" data-calories="438">
+                    <img src="./photos/tistechko.png" alt="Живі квіти" class="recipe-image">
+                    <div class="recipe-info">
+                        <div class="recipe-category">Тістечко:</div>
+                        <div class="recipe-name">Живі квіти</div>
+                        <div class="recipe-calories">Калорій у порції 438 кКал</div>
+                    </div>
+                </div>
+                <div class="recipe-card" data-category="тістечко" data-calories="348">
+                    <img src="./photos/mak.png" alt="Лимонне з маком" class="recipe-image">
+                    <div class="recipe-info">
+                        <div class="recipe-category">Тістечко:</div>
+                        <div class="recipe-name">Лимонне з маком</div>
+                        <div class="recipe-calories">Калорій у порції 348 кКал</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filters">
+                <div class="filter-group">
+                    <div class="filter-options">
+                        <input type="radio" name="category" id="скинути" checked>
+                        <label for="скинути" class="filter-btn">Всі</label>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <div class="filter-options">
+                        <input type="radio" name="category" id="пиріг">
+                        <label for="пиріг" class="filter-btn">Пиріг</label>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <div class="filter-options">
+                        <input type="radio" name="category" id="тістечко">
+                        <label for="тістечко" class="filter-btn">Тістечко</label>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <div class="filter-options">
+                        <input type="radio" name="category" id="рулет">
+                        <label for="рулет" class="filter-btn">Рулет</label>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <div class="filter-options">
+                        <input type="radio" name="category" id="торт">
+                        <label for="торт" class="filter-btn">Торт</label>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <div class="filter-options">
+                        <input type="radio" name="category" id="сирники">
+                        <label for="сирники" class="filter-btn">Сирники</label>
+                    </div>
+                </div>
+                <div class="filter-group calorie-filter">
+                    <div class="filter-title">Калорії у порції</div>
+                    <input type="range" min="0" max="600" value="400" class="calorie-slider">
+                    <div class="calorie-range">
+                        <span>Від 0 до 600 кКал</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="contact-info">
+                Контакти: <a href="mailto:tortik@smakota.ua">tortik@smakota.ua</a>
+            </div>
+            <div>© 2019 Smakota</div>
+        </footer>
+    </div>
+</body>
+</html>
